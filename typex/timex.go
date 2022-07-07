@@ -28,6 +28,11 @@ func Now() TimeX {
 
 // Scan implements the Scanner interface.
 func (t *TimeX) Scan(value interface{}) error {
+	if value == nil {
+		t.Time, t.Valid = time.Time{}, false
+		return nil
+	}
+
 	switch vt := value.(type) {
 	case time.Time:
 		t.Time = vt
@@ -80,12 +85,11 @@ func (t *TimeX) UnmarshalJSON(data []byte) (err error) {
 	}
 
 	for _, layout := range layouts {
-		rawTime, err := time.ParseInLocation(layout, text, time.Local)
+		t.Time, err = time.ParseInLocation(layout, text, time.Local)
 		if err != nil {
 			continue
 		}
 
-		t.Time = rawTime
 		t.Valid = true
 		break
 	}
