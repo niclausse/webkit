@@ -28,12 +28,15 @@ func (j *JsonX) Scan(value interface{}) (err error) {
 		return
 	}
 
-	s, ok := value.([]byte)
-	if !ok {
-		return fmt.Errorf("typex: jsonx support []byte only")
+	switch vt := value.(type) {
+	case []byte:
+		j.Bytes = append(j.Bytes[0:0], vt...)
+	case string:
+		j.Bytes = append(j.Bytes[0:0], utils.StringToBytes(vt)...)
+	default:
+		return fmt.Errorf("typex: jsonx support []byte,string only")
 	}
 
-	j.Bytes = append(j.Bytes[0:0], s...)
 	return
 }
 
