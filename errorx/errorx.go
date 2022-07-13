@@ -36,7 +36,7 @@ func New(errNo int, errMsg string, details ...string) *ErrorX {
 	return &ErrorX{BizNo: errNo, BizMsg: errMsg, Details: details}
 }
 
-func (e *ErrorX) WithDetails(details ...string) error {
+func (e *ErrorX) WithDetails(details ...string) *ErrorX {
 	x := &ErrorX{
 		BizNo:   e.BizNo,
 		BizMsg:  e.BizMsg,
@@ -47,7 +47,7 @@ func (e *ErrorX) WithDetails(details ...string) error {
 	return x
 }
 
-func (e *ErrorX) WithStack() error {
+func (e *ErrorX) WithStack() *ErrorX {
 	return &ErrorX{
 		BizNo:   e.BizNo,
 		BizMsg:  e.BizMsg,
