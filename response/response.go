@@ -3,7 +3,7 @@ package response
 import (
 	"fmt"
 	"github.com/penglin1995/webkit/errorx"
-	"github.com/penglin1995/webkit/logx"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 
@@ -24,13 +24,12 @@ type Responder interface {
 	Succeed(ctx *gin.Context, data interface{})
 }
 
-func NewResponder(mode Mode, logger logx.Logger) Responder {
-	return &responder{runMode: mode, logger: logger}
+func New(mode Mode) Responder {
+	return &responder{runMode: mode}
 }
 
 type responder struct {
 	runMode Mode
-	logger  logx.Logger
 }
 
 func (r *responder) Fail(ctx *gin.Context, err error) {
@@ -51,7 +50,8 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 		resp["stack"] = stack
 	}
 
-	r.logger.Errorf("%+v", err)
+	logrus.StandardLogger()
+	logrus.Errorf("%+v", err)
 
 	ctx.JSON(http.StatusOK, resp)
 }

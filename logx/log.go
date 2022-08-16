@@ -2,14 +2,72 @@ package logx
 
 import (
 	"context"
-	"io"
-
 	"github.com/penglin1995/webflow/consts"
+	"io"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"github.com/uber/jaeger-client-go"
 )
+
+const EmptyLogPath = ""
+
+var std Logger
+
+func StandardLogger() Logger {
+	if std == nil {
+		std = New(LevelDebug, EmptyLogPath)
+	}
+	return std
+}
+
+func Infof(format string, args ...interface{}) {
+	StandardLogger().Infof(format, args)
+}
+
+func Warnf(format string, args ...interface{}) {
+	StandardLogger().Warnf(format, args)
+}
+
+func Errorf(format string, args ...interface{}) {
+	StandardLogger().Errorf(format, args)
+}
+
+func Info(args ...interface{}) {
+	StandardLogger().Info(args)
+}
+
+func Warn(args ...interface{}) {
+	StandardLogger().Warn(args)
+}
+
+func Error(args ...interface{}) {
+	StandardLogger().Error(args)
+}
+
+func SetLevel(level Level) {
+	StandardLogger().SetLevel(level)
+}
+
+func GetLevel() Level {
+	return StandardLogger().GetLevel()
+}
+
+func SetOutput(output io.Writer) {
+	StandardLogger().SetOutput(output)
+}
+
+func GetOuter() io.Writer {
+	return StandardLogger().GetOuter()
+}
+
+func WithField(key string, value interface{}) Entry {
+	return StandardLogger().WithField(key, value)
+}
+
+func WithContext(ctx context.Context) Entry {
+	return StandardLogger().WithContext(ctx)
+}
 
 type Logger interface {
 	WithField(key string, value interface{}) Entry
@@ -52,21 +110,21 @@ func (e *entryX) WithContext(ctx context.Context) Entry {
 	return &entryX{field}
 }
 
-// gLog implement Logger
-type gLog struct {
+// logger implement Logger
+type logger struct {
 	*logrus.Logger
 }
 
-func (g *gLog) GetOuter() io.Writer {
+func (g *logger) GetOuter() io.Writer {
 	return g.Logger.Out
 }
 
-func (g *gLog) WithField(key string, value interface{}) Entry {
+func (g *logger) WithField(key string, value interface{}) Entry {
 	field := g.Logger.WithField(key, value)
 	return &entryX{field}
 }
 
-func (g *gLog) WithContext(ctx context.Context) Entry {
+func (g *logger) WithContext(ctx context.Context) Entry {
 	var (
 		traceID         string
 		spanID          string
@@ -94,15 +152,15 @@ Final:
 
 }
 
-func (g *gLog) SetLevel(level Level) {
+func (g *logger) SetLevel(level Level) {
 	g.Logger.SetLevel(levelMap[level])
 }
 
-func (g *gLog) GetLevel() Level {
+func (g *logger) GetLevel() Level {
 	return levelLogrusMap[g.Logger.GetLevel()]
 }
 
-func (g *gLog) SetFormatter(formatter Formatter) {
+func (g *logger) SetFormatter(formatter Formatter) {
 	if formatter == "" {
 		return
 	}
@@ -116,23 +174,22 @@ func (g *gLog) SetFormatter(formatter Formatter) {
 
 // Default return a default logger
 func Default() Logger {
-	GLog := &gLog{
-		logrus.New(),
-	}
-	return GLog
+	return &logger{Logger: logrus.New()}
 }
 
 // New return a logger
 func New(level Level, logPath string) Logger {
-	GLog := &gLog{
-		logrus.New(),
+	_logger := &logger{
+		Logger: logrus.New(),
 	}
 
-	GLog.SetLevel(level)
-	GLog.SetFormatter(FormatterJSON)
-	GLog.SetReportCaller(true)
-	GLog.AddHook(newLfsSizeHook(logPath))
+	_logger.SetLevel(level)
+	_logger.SetFormatter(FormatterJSON)
+	_logger.SetReportCaller(true)
 
-	return GLog
+	if len(logPath) > 0 {
+		_logger.AddHook(newLfsSizeHook(logPath))
+	}
 
+	return _logger
 }
