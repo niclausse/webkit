@@ -19,6 +19,12 @@ const (
 	ModeProduction Mode = "production"
 )
 
+var std = &responder{runMode: ModeDev}
+
+func SetMode(mode Mode) {
+	std.runMode = mode
+}
+
 type Responder interface {
 	Fail(ctx *gin.Context, err error)
 	Succeed(ctx *gin.Context, data interface{})
@@ -62,4 +68,12 @@ func (r *responder) Succeed(ctx *gin.Context, data interface{}) {
 		"err_msg": "",
 		"data":    data,
 	})
+}
+
+func Fail(ctx *gin.Context, err error) {
+	std.Fail(ctx, err)
+}
+
+func Succeed(ctx *gin.Context, data interface{}) {
+	std.Succeed(ctx, data)
 }
