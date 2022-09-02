@@ -47,8 +47,8 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 	}
 
 	resp := gin.H{
-		"err_no":  ex.BizNo,
-		"err_msg": ex.BizMsg,
+		"errNo":  ex.BizNo,
+		"errMsg": ex.BizMsg,
 	}
 
 	if r.runMode == ModeDev {
@@ -56,7 +56,6 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 		resp["stack"] = stack
 	}
 
-	logrus.StandardLogger()
 	logrus.Errorf("%+v", err)
 
 	ctx.JSON(http.StatusOK, resp)
@@ -64,9 +63,9 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 
 func (r *responder) Succeed(ctx *gin.Context, data interface{}) {
 	ctx.JSON(http.StatusOK, gin.H{
-		"err_no":  0,
-		"err_msg": "",
-		"data":    data,
+		"errNo":  0,
+		"errMsg": "",
+		"data":   data,
 	})
 }
 
