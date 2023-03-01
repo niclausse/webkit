@@ -2,7 +2,7 @@ package logx
 
 import (
 	"context"
-	"github.com/niclausse/webflow/consts"
+	"github.com/niclausse/webkit/consts"
 	"io"
 
 	"github.com/opentracing/opentracing-go"

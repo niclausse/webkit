@@ -1,8 +1,7 @@
 package logx
 
 import (
-	"github.com/niclausse/webflow/consts"
-
+	"github.com/niclausse/webkit/consts"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"github.com/uber/jaeger-client-go"
