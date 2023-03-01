@@ -2,7 +2,7 @@ package response
 
 import (
 	"fmt"
-	"github.com/penglin1995/webkit/errorx"
+	"github.com/niclausse/webkit/errorx"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"

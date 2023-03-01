@@ -3,7 +3,7 @@ package typex
 import (
 	"bytes"
 	"fmt"
-	"github.com/penglin1995/webkit/utils"
+	"github.com/niclausse/webkit/utils"
 	"strconv"
 )
 

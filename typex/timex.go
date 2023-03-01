@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
-	"github.com/penglin1995/webkit/utils"
+	"github.com/niclausse/webkit/utils"
 	"strings"
 	"time"
 )
