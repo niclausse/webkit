@@ -50,7 +50,7 @@ func init() {
 		Path:       defaultLogPath,
 
 		// 缓冲区，如果不配置默认使用以下配置
-		BufferSwitch:        true,
+		BufferSwitch:        false,
 		BufferSize:          256 * 1024, // 256kb
 		BufferFlushInterval: 5 * time.Second,
 	}
@@ -89,6 +89,14 @@ func WithLogDirPath(path string) Option {
 		if len(path) > 0 {
 			logConfig.Path = path
 		}
+	}
+}
+
+func WithBuffer(size int, flushInterval time.Duration) Option {
+	return func() {
+		logConfig.BufferSwitch = true
+		logConfig.BufferSize = size
+		logConfig.BufferFlushInterval = flushInterval
 	}
 }
 
