@@ -2,26 +2,18 @@ package response
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/niclausse/webkit/consts"
 	"github.com/niclausse/webkit/errorx"
-	"github.com/sirupsen/logrus"
+	"github.com/niclausse/webkit/zlog"
+	"github.com/pkg/errors"
 	"net/http"
 	"strings"
-
-	"github.com/pkg/errors"
-
-	"github.com/gin-gonic/gin"
 )
 
-type Mode string
+var std = &responder{runMode: consts.DevelopMode}
 
-const (
-	ModeDev        Mode = "dev"
-	ModeProduction Mode = "production"
-)
-
-var std = &responder{runMode: ModeDev}
-
-func SetMode(mode Mode) {
+func SetMode(mode consts.Mode) {
 	std.runMode = mode
 }
 
@@ -30,12 +22,12 @@ type Responder interface {
 	Succeed(ctx *gin.Context, data interface{})
 }
 
-func New(mode Mode) Responder {
+func New(mode consts.Mode) Responder {
 	return &responder{runMode: mode}
 }
 
 type responder struct {
-	runMode Mode
+	runMode consts.Mode
 }
 
 func (r *responder) Fail(ctx *gin.Context, err error) {
@@ -43,20 +35,20 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 
 	ex, ok := errors.Cause(err).(*errorx.ErrorX)
 	if !ok {
-		ex = errorx.SystemError.WithDetails("backend should use errorX!!!")
+		ex = errorx.SystemErr.WithDetails("backend should use errorX!!!")
 	}
 
 	resp := gin.H{
-		"errNo":  ex.BizNo,
-		"errMsg": ex.BizMsg,
+		"errNo":  ex.ErrNo,
+		"errMsg": ex.ErrMsg,
 	}
 
-	if r.runMode == ModeDev {
+	if r.runMode == consts.DevelopMode {
 		resp["details"] = ex.Details
 		resp["stack"] = stack
 	}
 
-	logrus.Errorf("%+v", err)
+	zlog.Errorf("%+v", err)
 
 	ctx.JSON(http.StatusOK, resp)
 }

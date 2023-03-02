@@ -6,14 +6,14 @@ import (
 )
 
 type ErrorX struct {
-	BizNo   int
-	BizMsg  string
+	ErrNo   int
+	ErrMsg  string
 	Details []string
 	*stack
 }
 
 func (e *ErrorX) Error() string {
-	return fmt.Sprintf("err_no: %d, err_msg: %s, details: %v", e.BizNo, e.BizMsg, e.Details)
+	return fmt.Sprintf("err_no: %d, err_msg: %s, details: %v", e.ErrNo, e.ErrMsg, e.Details)
 }
 
 func (e *ErrorX) Format(s fmt.State, verb rune) {
@@ -33,13 +33,13 @@ func (e *ErrorX) Format(s fmt.State, verb rune) {
 }
 
 func New(errNo int, errMsg string, details ...string) *ErrorX {
-	return &ErrorX{BizNo: errNo, BizMsg: errMsg, Details: details}
+	return &ErrorX{ErrNo: errNo, ErrMsg: errMsg, Details: details}
 }
 
 func (e *ErrorX) WithDetails(details ...string) *ErrorX {
 	x := &ErrorX{
-		BizNo:   e.BizNo,
-		BizMsg:  e.BizMsg,
+		ErrNo:   e.ErrNo,
+		ErrMsg:  e.ErrMsg,
 		Details: e.Details,
 	}
 
@@ -49,8 +49,8 @@ func (e *ErrorX) WithDetails(details ...string) *ErrorX {
 
 func (e *ErrorX) WithStack() *ErrorX {
 	return &ErrorX{
-		BizNo:   e.BizNo,
-		BizMsg:  e.BizMsg,
+		ErrNo:   e.ErrNo,
+		ErrMsg:  e.ErrMsg,
 		Details: e.Details,
 		stack:   callers(),
 	}
@@ -66,8 +66,8 @@ func WithStack(err error, biz *ErrorX) error {
 	}
 
 	x := &ErrorX{
-		BizNo:   biz.BizNo,
-		BizMsg:  biz.BizMsg,
+		ErrNo:   biz.ErrNo,
+		ErrMsg:  biz.ErrMsg,
 		Details: biz.Details,
 		stack:   biz.stack,
 	}

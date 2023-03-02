@@ -1,28 +1,18 @@
 package errorx
 
-const (
-	NoParamInvalid = 1 //参数错误
-	NoSystemError  = 2 //服务内部错误
-
-	NoDBInsertErr = 10
-	NoDBUpdateErr = 11
-	NoDBFindErr   = 12
-)
-
-var ErrMSG = map[int]string{
-	NoParamInvalid: "请求参数不合理",
-	NoSystemError:  "服务异常， 请稍后重试",
-
-	NoDBInsertErr: "db insert error",
-	NoDBUpdateErr: "db update error",
-	NoDBFindErr:   "db find error",
-}
+// 入参类错误:    4000~4999
+// 服务端内部错误: 5000～5999
+// 服务端数据错误: 6000~6999
 
 var (
-	ParamInvalid = New(NoParamInvalid, ErrMSG[NoParamInvalid])
-	SystemError  = New(NoSystemError, ErrMSG[NoSystemError])
+	InvalidParamErr = New(4000, "请求参数错误")
 
-	DBInsertErr = New(NoDBInsertErr, ErrMSG[NoDBInsertErr])
-	DBUpdateErr = New(NoDBUpdateErr, ErrMSG[NoDBUpdateErr])
-	DBFindErr   = New(NoDBFindErr, ErrMSG[NoDBFindErr])
+	SystemErr   = New(5000, "服务端错误")
+	QueryDBErr  = New(5001, "数据查询失败")
+	SaveDBErr   = New(5002, "数据保存失败")
+	InsertDBErr = New(5003, "数据新增失败")
+	UpdateDBErr = New(5004, "数据更新失败")
+	DeleteDBErr = New(5005, "数据删除失败")
+
+	DataNotExistErr = New(6000, "数据不存在")
 )

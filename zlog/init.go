@@ -2,6 +2,7 @@ package zlog
 
 import (
 	"fmt"
+	"github.com/niclausse/webkit/consts"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"time"
@@ -25,6 +26,7 @@ const (
 type config struct {
 	ZapLevel zapcore.Level
 	AppName  string
+	Mode     consts.Mode
 
 	// 以下变量仅对开发环境生效
 	Log2Stdout bool
@@ -44,6 +46,7 @@ func init() {
 	logConfig = &config{
 		ZapLevel: zapcore.InfoLevel,
 		AppName:  defaultAppName,
+		Mode:     consts.DevelopMode,
 
 		Log2Stdout: true,
 		Log2File:   true,
@@ -97,6 +100,12 @@ func WithBuffer(size int, flushInterval time.Duration) Option {
 		logConfig.BufferSwitch = true
 		logConfig.BufferSize = size
 		logConfig.BufferFlushInterval = flushInterval
+	}
+}
+
+func WithMode(mode consts.Mode) Option {
+	return func() {
+		logConfig.Mode = mode
 	}
 }
 

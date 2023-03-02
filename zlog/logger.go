@@ -1,6 +1,7 @@
 package zlog
 
 import (
+	"github.com/niclausse/webkit/consts"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io"
@@ -36,12 +37,18 @@ func newLogger() *zap.Logger {
 
 	var zapCores []zapcore.Core
 	if logConfig.Log2Stdout {
-		zapCores = append(zapCores, zapcore.NewCore(getEncoder(), getLogWriter(txtLogStdout), stdLevel))
+		var encoder zapcore.Encoder
+		if logConfig.Mode == consts.DevelopMode {
+			encoder = getConsoleEncoder()
+		} else {
+			encoder = getJsonEncoder()
+		}
+		zapCores = append(zapCores, zapcore.NewCore(encoder, getLogWriter(txtLogStdout), stdLevel))
 	}
 
 	if logConfig.Log2File {
-		zapCores = append(zapCores, zapcore.NewCore(getEncoder(), getLogWriter(txtLogNormal), infoLevel))
-		zapCores = append(zapCores, zapcore.NewCore(getEncoder(), getLogWriter(txtLogWarnFatal), errLevel))
+		zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogNormal), infoLevel))
+		zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogWarnFatal), errLevel))
 	}
 
 	core := zapcore.NewTee(zapCores...)
@@ -49,7 +56,26 @@ func newLogger() *zap.Logger {
 	return zap.New(core, zap.AddCaller(), zap.Fields(), zap.Development())
 }
 
-func getEncoder() zapcore.Encoder {
+func getConsoleEncoder() zapcore.Encoder {
+	// time字段编码器
+	timeEncoder := zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.999999")
+
+	encoderCfg := zapcore.EncoderConfig{
+		LevelKey:       "level",
+		TimeKey:        "time",
+		CallerKey:      "file",
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeCaller:   zapcore.ShortCallerEncoder, // 短路径编码器
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     timeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+	}
+	return zapcore.NewConsoleEncoder(encoderCfg)
+}
+
+func getJsonEncoder() zapcore.Encoder {
 	// time字段编码器
 	timeEncoder := zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.999999")
 
