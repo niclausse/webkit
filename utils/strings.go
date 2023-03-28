@@ -6,8 +6,8 @@ var uppercaseAcronym = map[string]string{
 	"ID": "id",
 }
 
-// ToCamel converts a string to CamelCase
-func ToCamel(s string) string {
+// ToUpperCamel converts a string to CamelCase
+func ToUpperCamel(s string) string {
 	return toCamelInitCase(s, true)
 }
 

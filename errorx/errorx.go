@@ -13,7 +13,10 @@ type ErrorX struct {
 }
 
 func (e *ErrorX) Error() string {
-	return fmt.Sprintf("err_no: %d, err_msg: %s, details: %v", e.ErrNo, e.ErrMsg, e.Details)
+	if len(e.Details) == 0 {
+		return fmt.Sprintf("errNo: %d, errMsg: %s", e.ErrNo, e.ErrMsg)
+	}
+	return fmt.Sprintf("errNo: %d, errMsg: %s, details: %v", e.ErrNo, e.ErrMsg, e.Details)
 }
 
 func (e *ErrorX) Format(s fmt.State, verb rune) {
@@ -21,7 +24,9 @@ func (e *ErrorX) Format(s fmt.State, verb rune) {
 	case 'v':
 		if s.Flag('+') {
 			io.WriteString(s, e.Error())
-			e.stack.Format(s, verb)
+			if e.stack != nil {
+				e.stack.Format(s, verb)
+			}
 			return
 		}
 		fallthrough
@@ -62,7 +67,7 @@ func WithStack(err error, biz *ErrorX) error {
 	}
 
 	if biz == nil {
-		return SystemError.WithDetails(err.Error())
+		return SystemErr.WithDetails(err.Error())
 	}
 
 	x := &ErrorX{
