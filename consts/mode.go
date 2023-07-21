@@ -1,8 +1,8 @@
 package consts
 
-type Mode uint8
+type Mode string
 
 const (
-	DevelopMode Mode = 1 // 开发模式
-	ReleaseMode Mode = 2 // 线上模式
+	DevelopMode Mode = "dev"        // 开发模式
+	ReleaseMode Mode = "production" // 线上模式
 )
