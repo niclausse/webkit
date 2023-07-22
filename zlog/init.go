@@ -21,6 +21,7 @@ const (
 const (
 	defaultLogPath = "./log"
 	defaultAppName = "app"
+	ContextKeyURI  = "_uri"
 )
 
 type config struct {

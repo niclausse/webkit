@@ -10,6 +10,19 @@ import (
 	"strings"
 )
 
+type (
+	Field  = zap.Field
+	Logger = zap.Logger
+)
+
+var (
+	AddCallerSkip = zap.AddCallerSkip
+	String        = zap.String
+	Int           = zap.Int
+	Int64         = zap.Int64
+	Float64       = zap.Float64
+)
+
 var (
 	zapLogger     *zap.Logger
 	sugaredLogger *zap.SugaredLogger

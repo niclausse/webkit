@@ -4,7 +4,7 @@ import "go.uber.org/zap"
 
 func GetSugaredLogger() *zap.SugaredLogger {
 	if sugaredLogger == nil {
-		sugaredLogger = getZapLogger().Sugar()
+		sugaredLogger = GetZapLogger().Sugar()
 	}
 
 	return sugaredLogger
