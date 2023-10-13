@@ -13,6 +13,12 @@ import (
 
 var std Responder = &responder{runMode: mode.DevelopMode}
 
+func CustomizeResponder(_std Responder) {
+	if _std != nil {
+		std = _std
+	}
+}
+
 type Responder interface {
 	SetMode(mode mode.Mode)
 	Fail(ctx *gin.Context, err error)
