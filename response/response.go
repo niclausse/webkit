@@ -3,31 +3,28 @@ package response
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/niclausse/webkit/consts"
 	"github.com/niclausse/webkit/errorx"
+	"github.com/niclausse/webkit/mode"
 	"github.com/niclausse/webkit/zlog"
 	"github.com/pkg/errors"
 	"net/http"
 	"strings"
 )
 
-var std = &responder{runMode: consts.DevelopMode}
-
-func SetMode(mode consts.Mode) {
-	std.runMode = mode
-}
+var std Responder = &responder{runMode: mode.DevelopMode}
 
 type Responder interface {
+	SetMode(mode mode.Mode)
 	Fail(ctx *gin.Context, err error)
 	Succeed(ctx *gin.Context, data interface{})
 }
 
-func New(mode consts.Mode) Responder {
-	return &responder{runMode: mode}
+type responder struct {
+	runMode mode.Mode
 }
 
-type responder struct {
-	runMode consts.Mode
+func (r *responder) SetMode(mode mode.Mode) {
+	r.runMode = mode
 }
 
 func (r *responder) Fail(ctx *gin.Context, err error) {
@@ -43,7 +40,7 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 		"errMsg": ex.ErrMsg,
 	}
 
-	if r.runMode == consts.DevelopMode {
+	if r.runMode == mode.DevelopMode {
 		resp["details"] = ex.Details
 		resp["stack"] = stack
 	}
@@ -59,6 +56,10 @@ func (r *responder) Succeed(ctx *gin.Context, data interface{}) {
 		"errMsg": "",
 		"data":   data,
 	})
+}
+
+func SetMode(mode mode.Mode) {
+	std.SetMode(mode)
 }
 
 func Fail(ctx *gin.Context, err error) {

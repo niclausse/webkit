@@ -2,7 +2,6 @@ package logx
 
 import (
 	"context"
-	"github.com/niclausse/webkit/consts"
 	"io"
 
 	"github.com/opentracing/opentracing-go"
@@ -147,8 +146,8 @@ func (g *logger) WithContext(ctx context.Context) Entry {
 	}
 
 Final:
-	return g.WithField(consts.OpenTraceTraceID.String(), traceID).
-		WithField(consts.OpenTraceSpanID.String(), spanID)
+	return g.WithField("X-Trace-ID", traceID).
+		WithField("X-Span-ID", spanID)
 
 }
 

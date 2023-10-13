@@ -1,7 +1,7 @@
 package zlog
 
 import (
-	"github.com/niclausse/webkit/consts"
+	"github.com/niclausse/webkit/mode"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io"
@@ -51,7 +51,7 @@ func newLogger() *zap.Logger {
 	var zapCores []zapcore.Core
 	if logConfig.Log2Stdout {
 		var encoder zapcore.Encoder
-		if logConfig.Mode == consts.DevelopMode {
+		if logConfig.Mode == mode.DevelopMode {
 			encoder = getConsoleEncoder()
 		} else {
 			encoder = getJsonEncoder()

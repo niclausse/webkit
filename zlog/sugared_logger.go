@@ -15,7 +15,7 @@ func Debug(args ...interface{}) {
 }
 
 func Debugf(format string, args ...interface{}) {
-	GetSugaredLogger().Debugf(format, args)
+	GetSugaredLogger().Debugf(format, args...)
 }
 
 func Info(args ...interface{}) {
@@ -23,7 +23,7 @@ func Info(args ...interface{}) {
 }
 
 func Infof(format string, args ...interface{}) {
-	GetSugaredLogger().Infof(format, args)
+	GetSugaredLogger().Infof(format, args...)
 }
 
 func Warn(args ...interface{}) {
@@ -31,7 +31,7 @@ func Warn(args ...interface{}) {
 }
 
 func Warnf(format string, args ...interface{}) {
-	GetSugaredLogger().Warnf(format, args)
+	GetSugaredLogger().Warnf(format, args...)
 }
 
 func Error(args ...interface{}) {
@@ -39,7 +39,7 @@ func Error(args ...interface{}) {
 }
 
 func Errorf(format string, args ...interface{}) {
-	GetSugaredLogger().Errorf(format, args)
+	GetSugaredLogger().Errorf(format, args...)
 }
 
 func Panic(args ...interface{}) {
@@ -47,7 +47,7 @@ func Panic(args ...interface{}) {
 }
 
 func Panicf(format string, args ...interface{}) {
-	GetSugaredLogger().Panicf(format, args)
+	GetSugaredLogger().Panicf(format, args...)
 }
 
 func Fatal(args ...interface{}) {
@@ -55,5 +55,5 @@ func Fatal(args ...interface{}) {
 }
 
 func Fatalf(format string, args ...interface{}) {
-	GetSugaredLogger().Fatalf(format, args)
+	GetSugaredLogger().Fatalf(format, args...)
 }
