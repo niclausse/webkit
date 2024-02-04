@@ -72,10 +72,6 @@ func (c *CSV) ExportLocal(data interface{}, opts ...Option) (string, error) {
 	return c.savePath, nil
 }
 
-func (c *CSV) Close() error {
-	return nil
-}
-
 func (c *CSV) writeStructSlice(data interface{}) error {
 	file, err := os.OpenFile(c.savePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {

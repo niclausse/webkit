@@ -13,16 +13,16 @@ import (
 type Exporter interface {
 	Export(data interface{}, opts ...Option) ([]byte, error)
 	ExportLocal(data interface{}, opts ...Option) (string, error)
-	Close() error
 }
 
 type config struct {
-	header           []string
-	expectedFilename string // expected filename to save
-	savedFilename    string // real filename to save
-	baseDir          string // basic dir to save
-	dir              string // unique path to save each file
-	savePath         string // file's full path,  usually: dir + savedFilename
+	header           []string // required for map data or string data
+	headerKeys       []string // required for map data
+	expectedFilename string   // expected filename to save
+	savedFilename    string   // real filename to save
+	baseDir          string   // basic dir to save
+	dir              string   // unique path to save each file
+	savePath         string   // file's full path,  usually: dir + savedFilename
 
 }
 
@@ -37,6 +37,12 @@ func WithFilename(name string) Option {
 func WithHeader(header []string) Option {
 	return func(cfg *config) {
 		cfg.header = header
+	}
+}
+
+func WithHeaderKeys(keys []string) Option {
+	return func(c *config) {
+		c.headerKeys = keys
 	}
 }
 
