@@ -143,11 +143,6 @@ func (e *Excel) ExportLocal(data interface{}, opts ...Option) (string, error) {
 }
 
 func (e *Excel) close() {
-	if e.streamWriter != nil {
-		if err := e.streamWriter.Flush(); err != nil {
-			log.Printf("exportx: failed to flush stream writer: %v", err)
-		}
-	}
 	if e.file != nil {
 		if err := e.file.Close(); err != nil {
 			log.Printf("exportx: failed to close file: %v", err)
@@ -247,7 +242,7 @@ func (e *Excel) stream(data interface{}) (err error) {
 		return ErrInvalidDataFormat
 	}
 
-	return
+	return e.streamWriter.Flush()
 }
 
 func (e *Excel) normal(data interface{}) (err error) {
