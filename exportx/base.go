@@ -11,7 +11,9 @@ import (
 )
 
 type Exporter interface {
+	// Export write data in specific file type(csv, excel...), return file content in bytes
 	Export(data interface{}, opts ...Option) ([]byte, error)
+	// ExportLocal write data in specific file type(csv, excel...), and save in local, return file path
 	ExportLocal(data interface{}, opts ...Option) (string, error)
 }
 
@@ -67,13 +69,6 @@ const (
 
 	ExcelExt Extend = ".xlsx"
 	CsvExt   Extend = ".csv"
-	ZipExt   Extend = ".zip"
-
-	ExcelType Type = "excel"
-	CsvType   Type = "csv"
-
-	ExcelLimit = 30000
-	CsvLimit   = 50000
 )
 
 func generateUniqueDirName() string {

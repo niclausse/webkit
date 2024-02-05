@@ -1,7 +1,6 @@
 package exportx
 
 import (
-	"bytes"
 	"github.com/pkg/errors"
 	"github.com/xuri/excelize/v2"
 	"log"
@@ -11,9 +10,8 @@ import (
 type Excel struct {
 	*config
 	*ExcelConfig
-	file         *excelize.File
-	streamWriter *excelize.StreamWriter
-	isPtr        bool
+	file  *excelize.File
+	isPtr bool
 }
 
 type ExcelExportType string
@@ -57,42 +55,11 @@ func NewExcel(opts ...ExcelOption) Exporter {
 func (e *Excel) Export(data interface{}, opts ...Option) ([]byte, error) {
 	defer e.close()
 
-	for _, opt := range opts {
-		opt(e.config)
-	}
-
-	var (
-		err error
-		bf  *bytes.Buffer
-	)
-
-	e.file = excelize.NewFile()
-
-	if e.sheetName == "" {
-		e.sheetName = "Sheet1"
-	} else {
-		if err = e.file.DeleteSheet("Sheet1"); err != nil {
-			return nil, errors.Wrap(err, "exportx: failed to delete default sheet")
-		}
-		if _, err = e.file.NewSheet(e.sheetName); err != nil {
-			return nil, errors.Wrap(err, "exportx: failed to create sheet")
-		}
-	}
-
-	if e.exportType == ExcelExportTypeStream {
-		e.streamWriter, err = e.file.NewStreamWriter(e.sheetName)
-		if err != nil {
-			return nil, errors.Wrap(err, "exportx: failed to create stream writer")
-		}
-		err = e.stream(data)
-	} else {
-		err = e.normal(data)
-	}
-	if err != nil {
+	if err := e.writeFile(data, opts...); err != nil {
 		return nil, err
 	}
 
-	bf, err = e.file.WriteToBuffer()
+	bf, err := e.file.WriteToBuffer()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to write to buffer")
 	}
@@ -103,11 +70,21 @@ func (e *Excel) Export(data interface{}, opts ...Option) ([]byte, error) {
 func (e *Excel) ExportLocal(data interface{}, opts ...Option) (string, error) {
 	defer e.close()
 
+	if err := e.writeFile(data, opts...); err != nil {
+		return "", err
+	}
+
+	if err := e.initSaveProfile(ExcelExt); err != nil {
+		return "", err
+	}
+
+	return e.savePath, e.file.SaveAs(e.savePath)
+}
+
+func (e *Excel) writeFile(data interface{}, opts ...Option) (err error) {
 	for _, opt := range opts {
 		opt(e.config)
 	}
-
-	var err error
 
 	e.file = excelize.NewFile()
 
@@ -115,31 +92,18 @@ func (e *Excel) ExportLocal(data interface{}, opts ...Option) (string, error) {
 		e.sheetName = "Sheet1"
 	} else {
 		if err = e.file.DeleteSheet("Sheet1"); err != nil {
-			return "", errors.Wrap(err, "exportx: failed to delete default sheet")
+			return errors.Wrap(err, "exportx: failed to delete default sheet")
 		}
 		if _, err = e.file.NewSheet(e.sheetName); err != nil {
-			return "", errors.Wrap(err, "exportx: failed to create sheet")
+			return errors.Wrap(err, "exportx: failed to create sheet")
 		}
 	}
 
 	if e.exportType == ExcelExportTypeStream {
-		e.streamWriter, err = e.file.NewStreamWriter(e.sheetName)
-		if err != nil {
-			return "", errors.Wrap(err, "exportx: failed to create stream writer")
-		}
-		err = e.stream(data)
-	} else {
-		err = e.normal(data)
-	}
-	if err != nil {
-		return "", err
+		return e.stream(data)
 	}
 
-	if err = e.initSaveProfile(ExcelExt); err != nil {
-		return "", err
-	}
-
-	return e.savePath, e.file.SaveAs(e.savePath)
+	return e.normal(data)
 }
 
 func (e *Excel) close() {
@@ -151,13 +115,19 @@ func (e *Excel) close() {
 }
 
 func (e *Excel) stream(data interface{}) (err error) {
+	var streamWriter *excelize.StreamWriter
+	streamWriter, err = e.file.NewStreamWriter(e.sheetName)
+	if err != nil {
+		return errors.Wrap(err, "exportx: failed to create stream writer")
+	}
+
 	// try set header
 	if len(e.header) > 0 {
 		headers := make([]interface{}, 0, len(e.header))
 		for i := 0; i < len(e.header); i++ {
 			headers = append(headers, e.header[i])
 		}
-		if err = e.streamWriter.SetRow("A1", headers); err != nil {
+		if err = streamWriter.SetRow("A1", headers); err != nil {
 			return errors.Wrap(err, "fail to set header row")
 		}
 	}
@@ -192,7 +162,7 @@ func (e *Excel) stream(data interface{}) (err error) {
 			}
 
 			coordinate, _ := excelize.CoordinatesToCellName(1, rowNum)
-			if err = e.streamWriter.SetRow(coordinate, rowValues); err != nil {
+			if err = streamWriter.SetRow(coordinate, rowValues); err != nil {
 				return errors.Wrap(err, "failed to set data value")
 			}
 		}
@@ -212,7 +182,7 @@ func (e *Excel) stream(data interface{}) (err error) {
 				headers = append(headers, tag)
 			}
 
-			if err = e.streamWriter.SetRow("A1", headers); err != nil {
+			if err = streamWriter.SetRow("A1", headers); err != nil {
 				return errors.Wrap(err, "failed to set header value")
 			}
 		}
@@ -234,7 +204,7 @@ func (e *Excel) stream(data interface{}) (err error) {
 			}
 
 			coordinate, _ := excelize.CoordinatesToCellName(1, rowNum)
-			if err = e.streamWriter.SetRow(coordinate, rowValues); err != nil {
+			if err = streamWriter.SetRow(coordinate, rowValues); err != nil {
 				return errors.Wrap(err, "failed to set data value")
 			}
 		}
@@ -242,7 +212,7 @@ func (e *Excel) stream(data interface{}) (err error) {
 		return ErrInvalidDataFormat
 	}
 
-	return e.streamWriter.Flush()
+	return streamWriter.Flush()
 }
 
 func (e *Excel) normal(data interface{}) (err error) {

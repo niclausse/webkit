@@ -12,7 +12,6 @@ import (
 
 var (
 	ErrInvalidHeader     = errors.New("exportx: invalid header")
-	ErrInvalidHeaderKeys = errors.New("exportx: invalid header keys")
 	ErrInvalidDataFormat = errors.New("exportx: invalid data format")
 )
 
