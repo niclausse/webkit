@@ -14,14 +14,13 @@ require (
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uniplaces/carbon v0.2.2
 	go.uber.org/zap v1.26.0
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.3.4
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.5
 )
 
 require (
-	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/bytedance/sonic v1.10.0-rc // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect

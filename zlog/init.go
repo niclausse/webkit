@@ -60,8 +60,13 @@ type config struct {
 	AppName  string
 	Mode     mode.Mode // default dev mode
 
-	Log2Stdout bool   // default true
-	Log2File   bool   // default false
+	Log2Stdout bool // default true
+	Log2File   bool // default false
+	LogRotate  bool // default false
+	LogMaxSize int  // default 100M
+	MaxBackups int  // default no limit
+	MaxAge     int
+	Compress   bool   // default false
 	Path       string // default ./log
 
 	// 缓冲区

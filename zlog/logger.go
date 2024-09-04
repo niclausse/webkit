@@ -4,6 +4,7 @@ import (
 	"github.com/niclausse/webkit/mode"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
 	"path/filepath"
@@ -30,9 +31,11 @@ var (
 
 // log文件后缀类型
 const (
-	txtLogNormal    = "normal"    // 正常的日志：info、debug
-	txtLogWarnFatal = "warnfatal" // 异常的日志： warn、error、fatal
-	txtLogStdout    = "stdout"
+	txtLogStdout          = 0
+	txtLogNormal          = 1 // 正常的日志：info、debug
+	txtLogWarnFatal       = 2 // 异常的日志： warn、error、fatal
+	txtLogRotateNormal    = 3
+	txtLogRotateWarnFatal = 4
 )
 
 func newLogger() *zap.Logger {
@@ -60,8 +63,13 @@ func newLogger() *zap.Logger {
 	}
 
 	if logConfig.Log2File {
-		zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogNormal), infoLevel))
-		zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogWarnFatal), errLevel))
+		if logConfig.LogRotate {
+			zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogRotateNormal), infoLevel))
+			zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogRotateWarnFatal), errLevel))
+		} else {
+			zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogNormal), infoLevel))
+			zapCores = append(zapCores, zapcore.NewCore(getJsonEncoder(), getLogWriter(txtLogWarnFatal), errLevel))
+		}
 	}
 
 	core := zapcore.NewTee(zapCores...)
@@ -108,18 +116,26 @@ func getJsonEncoder() zapcore.Encoder {
 	return zapcore.NewJSONEncoder(encoderCfg) // todo: custom webkit json_encoder
 }
 
-func getLogWriter(loggerType string) (ws zapcore.WriteSyncer) {
+func getLogWriter(loggerType int8) (ws zapcore.WriteSyncer) {
 	var w io.Writer
 	if loggerType == txtLogStdout {
-		// stdOut
 		w = os.Stdout
-	} else {
+	} else if loggerType < 3 {
 		// 打印到 name.log[.wf] 中
 		var err error
 		filename := filepath.Join(strings.TrimSuffix(logConfig.Path, "/"), appendLogFileTail(logConfig.AppName, loggerType))
 		w, err = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 		if err != nil {
 			panic("open log file error: " + err.Error())
+		}
+	} else {
+		// Configure lumberjack for log rotation
+		w = &lumberjack.Logger{
+			Filename:   filepath.Join(strings.TrimSuffix(logConfig.Path, "/"), appendLogFileTail(logConfig.AppName, loggerType)),
+			MaxSize:    logConfig.LogMaxSize,
+			MaxBackups: logConfig.MaxBackups,
+			MaxAge:     logConfig.MaxAge,
+			Compress:   logConfig.Compress,
 		}
 	}
 
@@ -138,12 +154,16 @@ func getLogWriter(loggerType string) (ws zapcore.WriteSyncer) {
 }
 
 // genFilename 拼装完整文件名
-func appendLogFileTail(appName, loggerType string) string {
+func appendLogFileTail(appName string, loggerType int8) string {
 	var tailFixed string
 	switch loggerType {
 	case txtLogNormal:
 		tailFixed = ".log"
+	case txtLogRotateNormal:
+		tailFixed = ".log"
 	case txtLogWarnFatal:
+		tailFixed = ".log.wf"
+	case txtLogRotateWarnFatal:
 		tailFixed = ".log.wf"
 	default:
 		tailFixed = ".log"
