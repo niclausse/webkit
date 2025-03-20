@@ -1,6 +1,7 @@
 package response
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/niclausse/webkit/errorx"
 	"github.com/niclausse/webkit/mode"
@@ -31,20 +32,39 @@ func (r *responder) SetMode(mode mode.Mode) {
 	r.runMode = mode
 }
 
+type Result struct {
+	ErrNo   int      `json:"errNo"`
+	ErrMsg  string   `json:"errMsg"`
+	Data    NullData `json:"data"`
+	Details []string `json:"details,omitempty"`
+}
+
+type NullData struct {
+	Valid bool
+	Data  interface{}
+}
+
+func (nd *NullData) MarshalJSON() ([]byte, error) {
+	if !nd.Valid {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal(nd.Data)
+}
+
 func (r *responder) Fail(ctx *gin.Context, err error) {
 	ex, ok := errors.Cause(err).(*errorx.ErrorX)
 	if !ok {
 		ex = errorx.SystemErr.WithDetails("backend should use errorX!!!")
 	}
 
-	resp := gin.H{
-		"errNo":  ex.ErrNo,
-		"errMsg": ex.ErrMsg,
-		"data":   "null",
+	resp := &Result{
+		ErrNo:  ex.ErrNo,
+		ErrMsg: ex.ErrMsg,
 	}
 
 	if r.runMode == mode.DevelopMode {
-		resp["details"] = ex.Details
+		resp.Details = ex.Details
 	}
 
 	zlog.WithContext(ctx.Request.Context()).Errorf("%+v", err)
@@ -53,10 +73,13 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 }
 
 func (r *responder) Succeed(ctx *gin.Context, data interface{}) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"errNo":  0,
-		"errMsg": "",
-		"data":   data,
+	ctx.JSON(http.StatusOK, &Result{
+		ErrNo:  0,
+		ErrMsg: "",
+		Data: NullData{
+			Valid: true,
+			Data:  data,
+		},
 	})
 }
 
