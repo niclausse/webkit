@@ -69,10 +69,14 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 
 	zlog.WithContext(ctx.Request.Context()).Errorf("%+v", err)
 
+	requestId, _ := ctx.Request.Context().Value(zlog.ContextKeyRequestID).(string)
+	ctx.Header("X-Request-ID", requestId)
 	ctx.JSON(http.StatusOK, resp)
 }
 
 func (r *responder) Succeed(ctx *gin.Context, data interface{}) {
+	requestId, _ := ctx.Request.Context().Value(zlog.ContextKeyRequestID).(string)
+	ctx.Header("X-Request-ID", requestId)
 	ctx.JSON(http.StatusOK, &Result{
 		ErrNo:  0,
 		ErrMsg: "",
