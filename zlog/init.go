@@ -123,6 +123,42 @@ func WithLog2File(file bool) Option {
 	}
 }
 
+func WithLogRotate(rotate bool) Option {
+	return func() {
+		logConfig.LogRotate = rotate
+	}
+}
+
+func WithMaxSize(size int) Option {
+	return func() {
+		logConfig.LogMaxSize = size
+	}
+}
+
+func WithMaxBackups(backups int) Option {
+	return func() {
+		logConfig.MaxBackups = backups
+	}
+}
+
+func WithMaxAge(age int) Option {
+	return func() {
+		logConfig.MaxAge = age
+	}
+}
+
+func WithCompress(compress bool) Option {
+	return func() {
+		logConfig.Compress = compress
+	}
+}
+
+func WithPath(path string) Option {
+	return func() {
+		logConfig.Path = path
+	}
+}
+
 func WithLogDirPath(path string) Option {
 	return func() {
 		if len(path) > 0 {

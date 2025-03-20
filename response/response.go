@@ -51,7 +51,7 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 		resp["stack"] = stack
 	}
 
-	zlog.Errorf("%+v, sid: %s", err, ctx.GetString("sid"))
+	zlog.WithContext(ctx.Request.Context()).Errorf("%+v", err)
 
 	ctx.JSON(http.StatusOK, resp)
 }
