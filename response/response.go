@@ -1,14 +1,12 @@
 package response
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/niclausse/webkit/errorx"
 	"github.com/niclausse/webkit/mode"
 	"github.com/niclausse/webkit/zlog"
 	"github.com/pkg/errors"
 	"net/http"
-	"strings"
 )
 
 var std Responder = &responder{runMode: mode.DevelopMode}
@@ -34,8 +32,6 @@ func (r *responder) SetMode(mode mode.Mode) {
 }
 
 func (r *responder) Fail(ctx *gin.Context, err error) {
-	stack := strings.Split(fmt.Sprintf("%+v", err), "\n")
-
 	ex, ok := errors.Cause(err).(*errorx.ErrorX)
 	if !ok {
 		ex = errorx.SystemErr.WithDetails("backend should use errorX!!!")
@@ -48,7 +44,6 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 
 	if r.runMode == mode.DevelopMode {
 		resp["details"] = ex.Details
-		resp["stack"] = stack
 	}
 
 	zlog.WithContext(ctx.Request.Context()).Errorf("%+v", err)
