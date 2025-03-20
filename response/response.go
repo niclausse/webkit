@@ -40,6 +40,7 @@ func (r *responder) Fail(ctx *gin.Context, err error) {
 	resp := gin.H{
 		"errNo":  ex.ErrNo,
 		"errMsg": ex.ErrMsg,
+		"data":   "null",
 	}
 
 	if r.runMode == mode.DevelopMode {
