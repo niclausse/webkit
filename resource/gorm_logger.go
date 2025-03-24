@@ -93,8 +93,10 @@ func (l ormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string
 }
 
 func (l ormLogger) commonFields(ctx context.Context) []zlog.Field {
+	requestId, _ := ctx.Value(zlog.ContextKeyRequestID).(string)
 	uri, _ := ctx.Value(zlog.ContextKeyURI).(string)
 	fields := []zlog.Field{
+		zlog.String("requestId", requestId),
 		zlog.String("uri", uri),
 		zlog.String("service", l.Service),
 		zlog.String("addr", l.Addr),
