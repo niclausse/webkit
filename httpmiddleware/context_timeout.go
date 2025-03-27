@@ -42,15 +42,15 @@ func ContextTimeout(timeout time.Duration) gin.HandlerFunc {
 		select {
 		case r := <-panicChan:
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"code":    http.StatusInternalServerError,
-				"message": "服务器内部错误",
+				"errNo":  http.StatusInternalServerError,
+				"errMsg": "服务器内部错误",
 			})
 			zlog.Errorf("[http] panic: %v", r)
 			return
 		case <-ctx.Done():
 			c.AbortWithStatusJSON(http.StatusRequestTimeout, gin.H{
-				"code":    http.StatusRequestTimeout,
-				"message": "请求超时",
+				"errNo":  http.StatusRequestTimeout,
+				"errMsg": "请求超时",
 			})
 			zlog.Errorf("[http] context deadline, %s - %s - %s", c.Request.URL, c.Request.RemoteAddr, c.Request.UserAgent())
 			return
