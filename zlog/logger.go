@@ -1,7 +1,6 @@
 package zlog
 
 import (
-	"github.com/niclausse/webkit/mode"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -54,7 +53,7 @@ func newLogger() *zap.Logger {
 	var zapCores []zapcore.Core
 	if logConfig.Log2Stdout {
 		var encoder zapcore.Encoder
-		if logConfig.Mode == mode.DevelopMode {
+		if logConfig.EncoderType == "console" {
 			encoder = getConsoleEncoder()
 		} else {
 			encoder = getJsonEncoder()

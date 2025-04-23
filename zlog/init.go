@@ -2,7 +2,6 @@ package zlog
 
 import (
 	"fmt"
-	"github.com/niclausse/webkit/mode"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"time"
@@ -56,9 +55,9 @@ const (
 )
 
 type config struct {
-	ZapLevel zapcore.Level
-	AppName  string
-	Mode     mode.Mode // default dev mode
+	ZapLevel    zapcore.Level
+	AppName     string
+	EncoderType string // "console", "json"
 
 	Log2Stdout bool // default true
 	Log2File   bool // default false
@@ -80,9 +79,9 @@ var logConfig *config
 
 func init() {
 	logConfig = &config{
-		ZapLevel: zapcore.InfoLevel,
-		AppName:  defaultAppName,
-		Mode:     mode.DevelopMode,
+		ZapLevel:    zapcore.InfoLevel,
+		AppName:     defaultAppName,
+		EncoderType: "",
 
 		Log2Stdout: true,
 		Log2File:   false,
@@ -175,9 +174,9 @@ func WithBuffer(size int, flushInterval time.Duration) Option {
 	}
 }
 
-func WithMode(mode mode.Mode) Option {
+func WithEncoderType(encoderType string) Option {
 	return func() {
-		logConfig.Mode = mode
+		logConfig.EncoderType = encoderType
 	}
 }
 
