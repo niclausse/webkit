@@ -1,8 +1,6 @@
 module github.com/niclausse/webkit
 
-go 1.21
-
-toolchain go1.23.0
+go 1.23.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
@@ -58,6 +56,8 @@ require (
 	github.com/mitchellh/hashstructure v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/niclausse/webkit/errorx v0.0.0-20250423074211-546cd5bec31b // indirect
+	github.com/niclausse/webkit/zlog v0.0.0-20250423074211-546cd5bec31b // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect

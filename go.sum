@@ -117,6 +117,10 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v1.0.2 h1:xBagoLtFs94CBntxluKeaWgTMpvLxC4ur3nMaC9Gz0M=
 github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
+github.com/niclausse/webkit/errorx v0.0.0-20250423074211-546cd5bec31b h1:XNoDzonOJISdTx/7yse5I1YuSmzqIQIYvw6Xy/Jlwrw=
+github.com/niclausse/webkit/errorx v0.0.0-20250423074211-546cd5bec31b/go.mod h1:6pH94NPuF6XrL+9SHXUgU+2gaJFDokZYRnsqjGxOC94=
+github.com/niclausse/webkit/zlog v0.0.0-20250423074211-546cd5bec31b h1:Dj5fEKZ4JnspoE0YoeyoCeL7JRaqor32TDpO6HiAbUo=
+github.com/niclausse/webkit/zlog v0.0.0-20250423074211-546cd5bec31b/go.mod h1:IFmi/5EArI1Y9Tydov16ER3QFh+urtwDBFqFE1Yqp04=
 github.com/opentracing/opentracing-go v1.2.0 h1:uEJPy/1a5RIPAJ0Ov+OIO8OxWu77jEv+1B0VhjKrZUs=
 github.com/opentracing/opentracing-go v1.2.0/go.mod h1:GxEUsuufX4nBwe+T+Wl9TAgYrxe9dPLANfrWvHYVTgc=
 github.com/pelletier/go-toml/v2 v2.0.8 h1:0ctb6s9mE31h0/lhu+J6OPmVeDxJn+kYnJc2jZR9tGQ=
