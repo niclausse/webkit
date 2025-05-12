@@ -3,6 +3,7 @@ package zlog
 import (
 	"context"
 	"go.uber.org/zap"
+	"strings"
 )
 
 func GetSugaredLogger() *zap.SugaredLogger {
@@ -62,10 +63,18 @@ func Fatalf(format string, args ...interface{}) {
 }
 
 func WithContext(ctx context.Context) *zap.SugaredLogger {
-	uri, _ := ctx.Value(ContextKeyURI).(string)
-	requestId, _ := ctx.Value(ContextKeyRequestID).(string)
-	return GetSugaredLogger().With(
-		String("uri", uri),
-		String("requestId", requestId),
-	).WithOptions(AddCallerSkip(-1))
+	args := func() (a []interface{}) {
+		uri, _ := ctx.Value(ContextKeyURI).(string)
+		requestId, _ := ctx.Value(ContextKeyRequestID).(string)
+		a = append(a, uri, requestId)
+
+		metas, _ := ctx.Value(ContextKeyMetas).(string)
+		for _, meta := range strings.Split(metas, ",") {
+			v, _ := ctx.Value(meta).(string)
+			a = append(a, String(meta, v))
+		}
+		return
+	}()
+
+	return GetSugaredLogger().With(args...).WithOptions(AddCallerSkip(-1))
 }

@@ -52,6 +52,7 @@ const (
 	defaultAppName      = "app"
 	ContextKeyURI       = "_uri"
 	ContextKeyRequestID = "_zlog_requestId"
+	ContextKeyMetas     = "_zlog_metas"
 )
 
 type config struct {
