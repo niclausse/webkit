@@ -6,7 +6,7 @@ import (
 	"github.com/dolthub/go-mysql-server/memory"
 	"github.com/dolthub/go-mysql-server/server"
 	"github.com/dolthub/go-mysql-server/sql"
-	"github.com/niclausse/webkit/resource"
+	"github.com/niclausse/webkit/v2/resource"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"log"
@@ -58,11 +58,10 @@ type TableOption func(db *memory.Database)
 
 func (m *MySQLMocker) StartMySQLServer(addr string, databases ...sql.Database) {
 	_ = sql.NewEmptyContext()
-	engine := sqle.NewDefault(
-		memory.NewDBProvider(
-			databases...,
-		),
+	pro := memory.NewDBProvider(
+		databases...,
 	)
+	engine := sqle.NewDefault(pro)
 
 	_addr := strings.Split(addr, ":")
 	if len(_addr) != 2 {
@@ -78,8 +77,10 @@ func (m *MySQLMocker) StartMySQLServer(addr string, databases ...sql.Database) {
 		Address:  addr,
 		Version:  "5.7.24-log",
 	}
+
 	var err error
-	m.Server, err = server.NewDefaultServer(config, engine)
+	m.Server, err = server.NewServer(config, engine, nil, memory.NewSessionBuilder(pro), nil)
+	//m.Server, err = server.NewDefaultServer(config, engine)
 	if err != nil {
 		panic(err)
 	}

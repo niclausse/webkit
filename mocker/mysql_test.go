@@ -17,7 +17,7 @@ func TestMySQL(t *testing.T) {
 			},
 		},
 	})
-	defer dbMocker.Server.Listener.Shutdown()
+	defer dbMocker.Server.Listener.Close()
 
 	if err := InitData("test.sql", dbMocker.Clients["test"]); err != nil {
 		t.Errorf("%+v", err)

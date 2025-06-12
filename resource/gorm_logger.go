@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/niclausse/webkit/utils"
+	"github.com/niclausse/webkit/v2/utils"
 	"github.com/niclausse/zlog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

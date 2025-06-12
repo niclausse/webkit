@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"database/sql/driver"
 	"fmt"
-	"github.com/niclausse/webkit/utils"
+	"github.com/niclausse/webkit/v2/utils"
 	"strings"
 )
 

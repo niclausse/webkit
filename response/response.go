@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/niclausse/errorx"
-	"github.com/niclausse/webkit/mode"
+	"github.com/niclausse/webkit/v2/mode"
 	"github.com/niclausse/zlog"
 	"github.com/pkg/errors"
 	"net/http"
