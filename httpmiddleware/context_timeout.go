@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/niclausse/webkit/zlog"
+	"github.com/niclausse/zlog"
 	"net/http"
 	"time"
 

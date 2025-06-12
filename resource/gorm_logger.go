@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/niclausse/webkit/utils"
-	"github.com/niclausse/webkit/zlog"
+	"github.com/niclausse/zlog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	ormUtil "gorm.io/gorm/utils"

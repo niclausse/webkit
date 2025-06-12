@@ -3,9 +3,9 @@ package response
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/niclausse/webkit/errorx"
+	"github.com/niclausse/errorx"
 	"github.com/niclausse/webkit/mode"
-	"github.com/niclausse/webkit/zlog"
+	"github.com/niclausse/zlog"
 	"github.com/pkg/errors"
 	"net/http"
 )
