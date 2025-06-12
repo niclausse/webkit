@@ -1,4 +1,4 @@
-module github.com/niclausse/webkit
+module github.com/niclausse/webkit/v2
 
 go 1.23.3
 
