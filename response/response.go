@@ -53,8 +53,8 @@ func (nd *NullData) MarshalJSON() ([]byte, error) {
 }
 
 func (r *responder) Fail(ctx *gin.Context, err error) {
-	ex, ok := errors.Cause(err).(*errorx.ErrorX)
-	if !ok {
+	var ex *errorx.ErrorX
+	if !errors.As(err, &ex) {
 		ex = errorx.SystemErr.WithDetails("backend should use errorX!!!")
 	}
 
